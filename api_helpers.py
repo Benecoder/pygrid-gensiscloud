@@ -141,3 +141,43 @@ def get_instance_public_ip(instance_id,API_TOKEN):
         print(response.status_code)
         print(json.dumps(response.json(), indent=4, sort_keys=True))
         exit()
+
+
+def create_instance_snapshot(instance_id, snapshot_name, API_TOKEN):
+
+    headers = {"Content-Type": "application/json", "X-Auth-Token": API_TOKEN}
+    jsonbody = {
+        "name": snapshot_name,
+    }
+    response = requests.post(
+        "https://api.genesiscloud.com/compute/v1/instances/"
+        + instance_id
+        + "/snapshots",
+        headers=headers,
+        json=jsonbody,
+    )
+
+    if response.status_code != 201:
+        print(response.status_code)
+        print(json.dumps(response.json(), indent=4, sort_keys=True))
+        exit()
+
+    snapshot_id = response.json()["snapshot"]["id"]
+    print("Creating snapshot " + snapshot_id + " of instance " + instance_id)
+    return snapshot_id
+
+
+
+def get_snapshot_status(snapshot_id,API_TOKEN):
+    headers = {"Content-Type": "application/json", "X-Auth-Token": API_TOKEN}
+    response = requests.get(
+        "https://api.genesiscloud.com/compute/v1/snapshots/" + snapshot_id,
+        headers=headers,
+    )
+
+    if response.status_code == 200:
+        return response.json()['status']
+    else:
+        print(response.status_code)
+        print(json.dumps(response.json(), indent=4, sort_keys=True))
+        exit()
