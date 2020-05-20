@@ -1,44 +1,45 @@
 #!/bin/bash
 
-# install graphic card drivers
-set -eux
-__nvidia_full_version="430_430.50-0ubuntu2"
-__nvidia_short_version="430"
+set -Eeux
+
+# enable repository including sources, update package cache
+
+sudo add-apt-repository -s -u -y restricted
+
+VERSION=430
 is_installed=false
-for i in $(seq 1 5)
+
+# Ubuntu has only a single version in the repository marked as "latest" of
+# this serires.
+for (( i=0 ; i<5; i++ ))
 do
-  echo "Connecting to http://archive.ubuntu.com site for $i time"
-  if curl -s --head --fail --request GET http://archive.ubuntu.com/ubuntu/pool/restricted/n/nvidia-graphics-drivers-${__nvidia_short_version} ;
-  then
-      echo "Connected to http://archive.ubuntu.com. Start downloading and installing the NVIDIA driver..."
-      __tempdir="$(mktemp -d)"
-      apt-get install -y --no-install-recommends "linux-headers-$(uname -r)" dkms
-      wget -P "${__tempdir}" http://archive.ubuntu.com/ubuntu/pool/restricted/n/nvidia-graphics-drivers-${__nvidia_short_version}/nvidia-kernel-common-${__nvidia_full_version}_amd64.deb
-      wget -P "${__tempdir}" http://archive.ubuntu.com/ubuntu/pool/restricted/n/nvidia-graphics-drivers-${__nvidia_short_version}/nvidia-kernel-source-${__nvidia_full_version}_amd64.deb
-      wget -P "${__tempdir}" http://archive.ubuntu.com/ubuntu/pool/restricted/n/nvidia-graphics-drivers-${__nvidia_short_version}/nvidia-dkms-${__nvidia_full_version}_amd64.deb
-      dpkg -i "${__tempdir}"/nvidia-kernel-common-${__nvidia_full_version}_amd64.deb "${__tempdir}"/nvidia-kernel-source-${__nvidia_full_version}_amd64.deb "${__tempdir}"/nvidia-dkms-${__nvidia_full_version}_amd64.deb
-      wget -P "${__tempdir}" http://archive.ubuntu.com/ubuntu/pool/restricted/n/nvidia-graphics-drivers-${__nvidia_short_version}/nvidia-utils-${__nvidia_full_version}_amd64.deb
-      wget -P "${__tempdir}" http://archive.ubuntu.com/ubuntu/pool/restricted/n/nvidia-graphics-drivers-${__nvidia_short_version}/libnvidia-compute-${__nvidia_full_version}_amd64.deb
-      dpkg -i "${__tempdir}"/nvidia-utils-${__nvidia_full_version}_amd64.deb "${__tempdir}"/libnvidia-compute-${__nvidia_full_version}_amd64.deb
-      rmmod nouveau
-      modprobe nvidia
-      nvidia-smi
-      is_installed=true
-      rm -r "${__tempdir}"
-      break
-  fi
+    sudo apt install -y nvidia-utils-${VERSION} libnvidia-compute-${VERSION} \
+        nvidia-kernel-common-${VERSION} \
+        nvidia-kernel-source-${VERSION} \
+        nvidia-dkms-${VERSION}
   sleep 2
 done
+
+# remove the module if it is inserted, blacklist it
+rmmod nouveau || echo "nouveau kernel module not loaded ..."
+echo "blacklist nouveau" > /etc/modprobe.d/nouveau.conf
+# log insertion of the nvidia module
+if modprobe nvidia ; then
+   nvidia-smi
+else
+   echo "nvidia device not found"
+fi
 if [ $is_installed = true ];
 then
-  echo "NVIDIA driver has been installed."
+  echo "NVIDIA driver has been successfully installed."
 else
-  echo "NVIDIA driver has NOT been installed. Because we can NOT reach to http://archive.ubuntu.com site which hosted necessary deb packages for installation."
+  echo "NVIDIA driver NOT been installed."
 fi
 
 
 
 # install docker
+sudo apt-get --assume-yes update
 sudo apt-get --assume-yes install \
     apt-transport-https \
     ca-certificates \
@@ -55,8 +56,6 @@ sudo add-apt-repository \
    $(lsb_release -cs) \
    stable"
 
-
-sudo apt-get --assume-yes update
 sudo apt-get --assume-yes install docker-ce docker-ce-cli containerd.io
 
 
