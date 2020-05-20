@@ -1,6 +1,4 @@
-import yaml
 import argparse
-import os
 from api_helpers import *
 import time
 
@@ -38,45 +36,16 @@ class Node:
         else:
             self.port = port
 
-        self.path_to_dc_file = self.compose_docker()
         self.ip = self.create_instance()
-
-    def compose_docker(self):
-
-        environment = ['GRID_NETWORK_URL=http://'+self.gateway_ip+':'+str(self.gateway_port),
-                       'ID='+self.name,
-                       'ADDRESS=http://localhost:'+self.port,
-                       'PORT='+self.port]
-
-        with open('docker-compose-node-form.yml', 'r') as stream:
-            form = yaml.safe_load(stream)
-
-        node_service = {'image': form['services']['name']['image'],
-                        'environment': environment,
-                        'depends_on': form['services']['name']['depends_on'],
-                        'ports': form['services']['name']['ports']}
-        services = {'redis': form['services']['redis'],
-                    self.name: node_service}
-        configuration = {'version': form['version'],
-                         'services': services}
-
-        path_to_dc_file = 'docker-compose-'+self.name+'.yml'
-        with open(path_to_dc_file, 'w') as stream:
-            yaml.dump(configuration, stream)
-
-        return path_to_dc_file
 
     def create_instance(self):
 
         # assemble th startup script
         with open('node_starter.sh', 'r') as stream:
             startup_script = stream.readlines()
-        with open(self.path_to_dc_file, 'r') as stream:
-            docker_compose = stream.read()
-
-        startup_script[4] = "echo '"+docker_compose+"' >> docker-compose.yml"
 
         startup_script[2] = 'GATEWAYIP='+self.gateway_ip+'\n'
+        startup_script[4] = 'NAME='+self.name
         startup_script = ''.join(startup_script)
 
         # assemble the parameters
@@ -101,11 +70,17 @@ class Node:
         # create the instance
         instance['id'] = start_instance(instance, API_TOKEN)
 
+        print('instance is starting ...')
         while get_instance_status(instance['id'], API_TOKEN) != 'active':
             time.sleep(10)
         
         ip = get_instance_public_ip(instance['id'], API_TOKEN)
         print('public ip is: '+ip)
+
+        print('running startup script ...')
+        while get_startup_script_status(ip) != 'done':
+            time.sleep(10)
+
         return ip
 
 
@@ -115,4 +90,4 @@ if __name__ == '__main__':
     API_TOKEN = args.api_token
     SSH_KEY = args.ssh_key
 
-    test_node = Node('hans-joachim', '192.162.10.21')
+    test_node = Node('peter', '192.162.10.21')

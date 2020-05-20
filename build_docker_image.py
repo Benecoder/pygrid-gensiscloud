@@ -81,4 +81,4 @@ if __name__ == '__main__':
     API_TOKEN = args.api_token
     SSH_KEY = args.ssh_key
 
-    build_image_from_scratch('test_docker')
+    build_image_from_scratch('gateway')

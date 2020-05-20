@@ -1,12 +1,12 @@
 #!/bin/bash
 
-sudo apt-get update
+apt-get update
 
 set -Eeux
 
 # enable repository including sources, update package cache
 
-sudo add-apt-repository -s -u -y restricted
+add-apt-repository -s -u restricted
 
 VERSION=430
 is_installed=false
@@ -66,8 +66,8 @@ sudo curl -L "https://github.com/docker/compose/releases/download/1.25.5/docker-
 sudo chmod +x /usr/local/bin/docker-compose
 sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 
-
+cd /home/ubuntu
 git clone https://github.com/Benecoder/distributor.git
-cd distributor
+
 
 
