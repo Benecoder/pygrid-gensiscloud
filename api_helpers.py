@@ -1,8 +1,9 @@
 import requests
 import json
+import subprocess
 
 
-def get_image_id(image_name, API_TOKEN):
+def get_available_images(API_TOKEN):
     # getting a list of available instance images.
 
     headers = {"Content-Type": "application/json", "X-Auth-Token": API_TOKEN}
@@ -25,7 +26,7 @@ def get_image_id(image_name, API_TOKEN):
     for image in response.json()["images"]:
         available_images[image["name"]] = image["id"]
 
-    return available_images[image_name]
+    return available_images
 
 
 def get_ssh_key_ids(ssh_key_names, API_TOKEN):
@@ -94,9 +95,10 @@ def start_instance(instance, API_TOKEN):
         "type": instance["type"],
         "image": instance["image_id"],
         "ssh_keys": instance["ssh_key_ids"],
-        "security_groups": instance["security_group_ids"],
-        "metadata": {"startup_script": instance["startup_script"]},
-    }
+        "security_groups": instance["security_group_ids"]}
+    if 'startup_script' in [*instance]:
+        jsonbody['metadata'] = {"startup_script": instance["startup_script"]}
+
     response = requests.post(
         "https://api.genesiscloud.com/compute/v1/instances",
         headers=headers,
@@ -128,7 +130,7 @@ def get_instance_status(instance_id, API_TOKEN):
         exit()
 
 
-def get_instance_public_ip(instance_id,API_TOKEN):
+def get_instance_public_ip(instance_id, API_TOKEN):
 
     headers = {"Content-Type": "application/json", "X-Auth-Token": API_TOKEN}
     response = requests.get(
@@ -140,6 +142,21 @@ def get_instance_public_ip(instance_id,API_TOKEN):
     else:
         print(response.status_code)
         print(json.dumps(response.json(), indent=4, sort_keys=True))
+        exit()
+
+
+def get_startup_script_status(public_ip):
+
+    command = ['ssh', 'ubuntu@'+public_ip,
+               '-o', 'StrictHostKeyChecking=no',
+               'cloud-init status']
+
+    output = subprocess.run(command, capture_output=True)
+    if output.returncode == 0:
+        return output.stdout[:-1].decode('utf-8').split(' ')[-1]
+    else:
+        print('Determining the cloud-init status failed.')
+        print('return code: '+str(output.returncode))
         exit()
 
 
@@ -167,8 +184,7 @@ def create_instance_snapshot(instance_id, snapshot_name, API_TOKEN):
     return snapshot_id
 
 
-
-def get_snapshot_status(snapshot_id,API_TOKEN):
+def get_snapshot_status(snapshot_id, API_TOKEN):
     headers = {"Content-Type": "application/json", "X-Auth-Token": API_TOKEN}
     response = requests.get(
         "https://api.genesiscloud.com/compute/v1/snapshots/" + snapshot_id,
@@ -176,8 +192,6 @@ def get_snapshot_status(snapshot_id,API_TOKEN):
     )
 
     if response.status_code == 200:
-        return response.json()['status']
+        return response.json()['snapshot']['status']
     else:
-        print(response.status_code)
-        print(json.dumps(response.json(), indent=4, sort_keys=True))
-        exit()
+        return 'instance unavailable'

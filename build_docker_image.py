@@ -24,20 +24,25 @@ parser.add_argument(
 
 def build_image_from_scratch(name):
 
-    with open('gateway_starter.sh', 'r') as stream:
-        startup_script = stream.read()
-
     instance = {
         "name": name,
         "type": "vcpu-4_memory-12g_disk-80g_nvidia1080ti-1",
         "image_name": "Ubuntu 18.04",
         "ssh_key_names": [SSH_KEY],
-        "security_group_names": ["standard"],
-        "startup_script": startup_script,
+        "security_group_names": ["standard"]
     }
 
     # pick the right image
-    instance['image_id'] = get_image_id(instance['image_name'], API_TOKEN)
+    desired_image_name = 'nvidia+docker'
+    available_images = get_available_images(API_TOKEN)
+    if desired_image_name in [*available_images]:
+        building_from_scratch = False
+        instance['image_id'] = available_images[desired_image_name]
+    else:
+        building_from_scratch = True
+        instance['image_id'] = available_images[instance['image_name']]
+        with open('gateway_starter.sh', 'r') as stream:
+            instance['startup_script'] = stream.read()
 
     # pick the right ssh key
     instance['ssh_key_ids'] = get_ssh_key_ids(instance['ssh_key_names'], API_TOKEN)
@@ -48,20 +53,25 @@ def build_image_from_scratch(name):
     # create the instance
     instance['id'] = start_instance(instance, API_TOKEN)
 
+    # waiting for the instance to start
+    print('instance is starting ...')
     while get_instance_status(instance['id'], API_TOKEN) != 'active':
-        time.sleep(10)
+        time.sleep(5)
 
     instance['ip'] = get_instance_public_ip(instance['id'], API_TOKEN)
     print('public ip is: ' + instance['ip'])
 
-    snapshot_id = create_instance_snapshot(instance['id'], instance['name'], API_TOKEN)
+    # waiting for the installation to finish
+    if building_from_scratch:
+        print('installing nvidia drivers and docker ...')
+        while get_startup_script_status(instance['ip']) == 'running':
+            time.sleep(5)
 
-    instance_ready = get_instance_status(snapshot_id, API_TOKEN) == 'active'
-    while not instance_ready:
-        time.sleep(5)
-        instance_status = get_instance_status(snapshot_id, API_TOKEN)
-        print(instance_status)
-        instance_ready = instance_status == 'active'
+        # creating the image snapshot
+        snapshot_id = create_instance_snapshot(instance['id'], desired_image_name, API_TOKEN)
+
+        while get_snapshot_status(snapshot_id, API_TOKEN) != 'active':
+            time.sleep(5)
 
     return instance
 

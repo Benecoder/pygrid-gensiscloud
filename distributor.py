@@ -87,7 +87,8 @@ class Node:
         }
 
         # pick the right image
-        instance['image_id'] = get_image_id(instance['image_name'], API_TOKEN)
+        avail_images = get_available_images(API_TOKEN)
+        instance['image_id'] = avail_images[instance['image_name']]
 
         # pick the right ssh key
         instance['ssh_key_ids'] = get_ssh_key_ids(instance['ssh_key_names'], API_TOKEN)
