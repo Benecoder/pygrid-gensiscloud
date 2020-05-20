@@ -71,16 +71,19 @@ class Node:
         # assemble th startup script
         with open('node_starter.sh', 'r') as stream:
             startup_script = stream.readlines()
+        with open(self.path_to_dc_file, 'r') as stream:
+            docker_compose = stream.read()
+
+        startup_script[4] = "echo '"+docker_compose+"' >> docker-compose.yml"
 
         startup_script[2] = 'GATEWAYIP='+self.gateway_ip+'\n'
-        startup_script[3] = 'DOCKER_PATH='+os.path.abspath(self.path_to_dc_file)+'\n'
         startup_script = ''.join(startup_script)
 
         # assemble the parameters
         instance = {
             "name": self.name,
             "type": "vcpu-4_memory-12g_disk-80g_nvidia1080ti-1",
-            "image_name": "docker+nvidia",
+            "image_name": "nvidia+docker",
             "ssh_key_names": [SSH_KEY],
             "security_group_names": ["standard"],
             "startup_script": startup_script,
