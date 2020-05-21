@@ -15,11 +15,11 @@ services:
         - 6379
         ports:
         - 6379:6379
-   brutus:
+    brutus:
         image: openmined/grid-node:latest
         environment:
                 - GRID_NETWORK_URL=http://localhost:5000
-                - ID=BRUTUS
+                - ID=Brutus
                 - ADDRESS=http://localhost:3000/
                 - PORT=3000
         depends_on:
