@@ -148,16 +148,13 @@ def get_instance_public_ip(instance_id, API_TOKEN):
 def get_startup_script_status(public_ip):
 
     command = ['ssh', 'ubuntu@'+public_ip,
-               '-o', 'StrictHostKeyChecking=no',
+               '-o', 'StrictHostKeyChecking=accept-new',
                'cloud-init status']
 
     output = subprocess.run(command, capture_output=True)
     if output.returncode == 0:
         return output.stdout[:-1].decode('utf-8').split(' ')[-1]
     else:
-        print('Determining the cloud-init status failed.')
-        print('return code: '+str(output.returncode))
-        print('will keep trying...')
         return 'request failed'
 
 

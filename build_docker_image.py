@@ -64,14 +64,26 @@ def build_image_from_scratch(name):
     # waiting for the installation to finish
     if building_from_scratch:
         print('installing nvidia drivers and docker ...')
-        while get_startup_script_status(instance['ip']) != 'done':
+        error_count = 0
+        installation_finished = False
+        while not installation_finished:
             time.sleep(5)
+            status = get_startup_script_status(instance['ip'])
+            installation_finished = (status == 'done')
+            if status == 'request failed':
+                error_count += 1
+            if error_count > 5:
+                print('checking the cloud-init status failed for the fifth time.')
+                print('exiting...')
+                exit()
 
         # creating the image snapshot
         snapshot_id = create_instance_snapshot(instance['id'], desired_image_name, API_TOKEN)
 
         while get_snapshot_status(snapshot_id, API_TOKEN) != 'active':
             time.sleep(5)
+    else:
+        print('Used image snapshot '+str(desired_image_name)+ ' for installation.')
 
     return instance
 
