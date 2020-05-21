@@ -29,7 +29,7 @@ def build_image_from_scratch(name):
         "type": "vcpu-4_memory-12g_disk-80g_nvidia1080ti-1",
         "image_name": "Ubuntu 18.04",
         "ssh_key_names": [SSH_KEY],
-        "security_group_names": ["standard"]
+        "security_group_names": ["standard", "pygrid"]
     }
 
     # pick the right image

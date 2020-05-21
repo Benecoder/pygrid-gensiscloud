@@ -8,6 +8,8 @@ runcmd:
   - [ cd, distributor ]
   - [ chmod, +x, build_docker_image.sh ]
   - [ ./build_docker_image.sh ]
+  - [ chmod, +x, gateway.sh ]
+  - [ ./gatway.sh, &]
 
 packages:
   - docker.io

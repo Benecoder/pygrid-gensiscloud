@@ -14,7 +14,7 @@ services:
         ports:
         - 6379:6379
     $NAME:
-        image: openmined/grid-node:dev
+        image: openmined/grid-node:latest
         environment:
                 - GRID_NETWORK_URL=http://$GATEWAYIP:5000
                 - ID=$NAME
