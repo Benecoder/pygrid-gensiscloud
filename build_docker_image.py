@@ -41,7 +41,7 @@ def build_image_from_scratch(name):
     else:
         building_from_scratch = True
         instance['image_id'] = available_images[instance['image_name']]
-        with open('gateway_starter.sh', 'r') as stream:
+        with open('base_image_cloud_init.yml', 'r') as stream:
             instance['startup_script'] = stream.read()
 
     # pick the right ssh key
@@ -64,7 +64,7 @@ def build_image_from_scratch(name):
     # waiting for the installation to finish
     if building_from_scratch:
         print('installing nvidia drivers and docker ...')
-        while get_startup_script_status(instance['ip']) == 'running':
+        while get_startup_script_status(instance['ip']) != 'done':
             time.sleep(5)
 
         # creating the image snapshot

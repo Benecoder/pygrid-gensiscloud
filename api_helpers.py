@@ -157,7 +157,8 @@ def get_startup_script_status(public_ip):
     else:
         print('Determining the cloud-init status failed.')
         print('return code: '+str(output.returncode))
-        exit()
+        print('will keep trying...')
+        return 'request failed'
 
 
 def create_instance_snapshot(instance_id, snapshot_name, API_TOKEN):

@@ -13,7 +13,7 @@ is_installed=false
 # this serires.
 for (( i=0 ; i<5; i++ ))
 do
-    sudo apt install -y nvidia-utils-${VERSION} libnvidia-compute-${VERSION} \
+    apt install -y nvidia-utils-${VERSION} libnvidia-compute-${VERSION} \
         nvidia-kernel-common-${VERSION} \
         nvidia-kernel-source-${VERSION} \
         nvidia-dkms-${VERSION}
