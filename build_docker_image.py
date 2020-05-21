@@ -72,10 +72,14 @@ def build_image_from_scratch(name):
             time.sleep(5)
             status = get_startup_script_status(instance['ip'])
             installation_finished = (status == 'done')
+            if status == 'error':
+                print('Installation failed.')
+                print('Check  /var/log/cloud-init-output.log on the running instance for details.')
             if status == 'request failed':
                 error_count += 1
             if error_count > 5:
                 print('checking the cloud-init status failed for the fifth time.')
+                print('Unable to determine state of the instance.')
                 print('exiting...')
                 exit()
 

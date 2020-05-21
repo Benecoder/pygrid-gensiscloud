@@ -9,7 +9,8 @@ runcmd:
   - [ chmod, +x, build_docker_image.sh ]
   - [ ./build_docker_image.sh ]
   - [ chmod, +x, gateway.sh ]
-  - [ "/home/ubuntu/distributor/gateway.sh &"]
+  - [ docker, pull, "openmined/grid-gateway:latest" ]
+  - [ docker, pull, "openmined/grid-node:latest" ]
 
 packages:
   - docker.io
