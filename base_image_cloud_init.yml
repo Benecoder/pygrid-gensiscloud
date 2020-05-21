@@ -9,7 +9,7 @@ runcmd:
   - [ chmod, +x, build_docker_image.sh ]
   - [ ./build_docker_image.sh ]
   - [ chmod, +x, gateway.sh ]
-  - [ "./gatway.sh &"]
+  - [ "/home/ubuntu/distributor/gateway.sh &"]
 
 packages:
   - docker.io
