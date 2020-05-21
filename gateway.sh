@@ -1,9 +1,17 @@
 #!/bin/bash
 
 # waiting for installation to finish
-if [$(cloud-init status) == "running"];
-then
+while [[ $(cloud-init status) == *running* ]] ;
+do
+  echo "waiting"
   sleep 5
-fi
+done
 
-touch /home/ubuntu/gateway_started.txt
+
+docker pull openmined/grid-gateway:latest
+sudo docker-compose up
+
+
+
+
+
