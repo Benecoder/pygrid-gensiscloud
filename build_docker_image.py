@@ -38,6 +38,8 @@ def build_image_from_scratch(name):
     if desired_image_name in [*available_images]:
         building_from_scratch = False
         instance['image_id'] = available_images[desired_image_name]
+        with open('refresh_base_image.sh', 'r') as stream:
+            instance['startup_script'] = stream.read()
     else:
         building_from_scratch = True
         instance['image_id'] = available_images[instance['image_name']]
