@@ -25,6 +25,6 @@ services:
         ports:
         - 3000:3000" >> /home/ubuntu/docker-compose.yml
 
-docker pull opemnined/grid-gateway:dev
+docker pull opemnined/grid-gateway:latest
 
 docker-compose up
