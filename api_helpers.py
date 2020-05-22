@@ -149,11 +149,15 @@ def get_startup_script_status(public_ip):
 
     command = ['ssh', 'ubuntu@'+public_ip,
                '-o', 'StrictHostKeyChecking=accept-new',
-               'cloud-init status']
+               'ls /home/ubuntu/installation_finished']
 
     output = subprocess.run(command, capture_output=True)
-    if output.returncode == 0:
-        return output.stdout[:-1].decode('utf-8').split(' ')[-1]
+    stdout = output.stdout[:-1].decode('utf-8')
+    stder = output.stderr[:-1].decode('utf-8')
+    if stdout:
+        return stdout
+    elif stder.split(':')[0] == 'ls':
+        return stder
     else:
         return 'request failed'
 
