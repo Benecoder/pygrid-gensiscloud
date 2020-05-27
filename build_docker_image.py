@@ -22,19 +22,19 @@ parser.add_argument(
 )
 
 
-def build_image_from_scratch(name):
+def build_image(name, ssh_key, api_token):
 
     instance = {
         "name": name,
         "type": "vcpu-4_memory-12g_disk-80g_nvidia1080ti-1",
         "image_name": "Ubuntu 18.04",
-        "ssh_key_names": [SSH_KEY],
+        "ssh_key_names": [ssh_key],
         "security_group_names": ["standard", "pygrid"]
     }
 
     # pick the right image
     desired_image_name = 'nvidia+docker'
-    available_images = get_available_images(API_TOKEN)
+    available_images = get_available_images(api_token)
     if desired_image_name in [*available_images]:
         building_from_scratch = False
         instance['image_id'] = available_images[desired_image_name]
@@ -47,20 +47,20 @@ def build_image_from_scratch(name):
             instance['startup_script'] = stream.read()
 
     # pick the right ssh key
-    instance['ssh_key_ids'] = get_ssh_key_ids(instance['ssh_key_names'], API_TOKEN)
+    instance['ssh_key_ids'] = get_ssh_key_ids(instance['ssh_key_names'], api_token)
 
     # picks the right security group
-    instance['security_group_ids'] = get_security_group_ids(instance['security_group_names'], API_TOKEN)
+    instance['security_group_ids'] = get_security_group_ids(instance['security_group_names'], api_token)
 
     # create the instance
-    instance['id'] = start_instance(instance, API_TOKEN)
+    instance['id'] = start_instance(instance, api_token)
 
     # waiting for the instance to start
     print('instance is starting ...')
-    while get_instance_status(instance['id'], API_TOKEN) != 'active':
+    while get_instance_status(instance['id'], api_token) != 'active':
         time.sleep(5)
 
-    instance['ip'] = get_instance_public_ip(instance['id'], API_TOKEN)
+    instance['ip'] = get_instance_public_ip(instance['id'], api_token)
     print('public ip is: ' + instance['ip'])
 
     # waiting for the installation to finish
@@ -81,19 +81,19 @@ def build_image_from_scratch(name):
                 exit()
 
         # creating the image snapshot
-        snapshot_id = create_instance_snapshot(instance['id'], desired_image_name, API_TOKEN)
+        snapshot_id = create_instance_snapshot(instance['id'], desired_image_name, api_token)
 
-        while get_snapshot_status(snapshot_id, API_TOKEN) != 'active':
+        while get_snapshot_status(snapshot_id, api_token) != 'active':
             time.sleep(5)
     else:
-        print('Used image snapshot '+str(desired_image_name)+ ' for installation.')
+        print('Used image snapshot '+str(desired_image_name) + ' for installation.')
 
     return instance
 
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    API_TOKEN = args.api_token
-    SSH_KEY = args.ssh_key
+    api_token_arg = args.api_token
+    ssh_key_arg = args.ssh_key
 
-    build_image_from_scratch('gateway')
+    build_image('gateway', ssh_key_arg, api_token_arg)

@@ -9,19 +9,19 @@ parser = argparse.ArgumentParser(description="Building a PyGrid across Genesis C
 
 parser.add_argument(
     "--gateway_ip",
-    type=str,required=True,
+    type=str, required=True,
     help="The private IPv4 of the gateway. The gateway needs to be starting the workers."
 )
 
 parser.add_argument(
     "--api_token",
-    type=str,required=True,
+    type=str, required=True,
     help="The API token. Generate a new one under https://account.genesiscloud.com/dashboard/security."
 )
 
 parser.add_argument(
     "--ssh_key",
-    type=str,required=True,
+    type=str, required=True,
     help="The name of your ssh key. Public key needs to be stored here (" +
          "https://account.genesiscloud.com/dashboard/security) and private key in ~/.ssh/id_rsa ."
 )
