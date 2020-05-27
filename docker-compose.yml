@@ -18,9 +18,9 @@ services:
     brutus:
         image: openmined/grid-node:latest
         environment:
-                - GRID_NETWORK_URL=http://localhost:5000
+                - GRID_NETWORK_URL=http://gateway:5000
                 - ID=Brutus
-                - ADDRESS=http://localhost:3000/
+                - ADDRESS=http://gateway:3000/
                 - PORT=3000
         depends_on:
                 - "redis"

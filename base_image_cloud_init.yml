@@ -9,10 +9,11 @@ runcmd:
   - [ chmod, +x, build_docker_image.sh ]
   - [ ./build_docker_image.sh ]
   - [ chmod, +x, gateway.sh ]
+  - [ echo, "127.0.0.1 gateway", '>', /etc/hosts]
   - [ touch, /home/ubuntu/installation_finished ]
   - [ docker, pull, "openmined/grid-gateway:latest" ]
-  - [ docker, pull, "openmined/grid-node:latest"
-  - [ sudo, docker, compose, up ]
+  - [ docker, pull, "openmined/grid-node:latest" ]
+  - [ sudo, docker-compose, up ]
 
 packages:
   - docker.io
