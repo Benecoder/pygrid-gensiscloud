@@ -3,6 +3,7 @@ package_update: true
 package_upgrade: true
 
 runcmd:
+  - [ "/bin/systemctl", start, resize-disk.service ]
   - [ cd , /home/ubuntu ]
   - [ git, clone, "https://github.com/Benecoder/distributor.git"]
   - [ cd, distributor ]
