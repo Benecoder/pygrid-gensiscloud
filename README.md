@@ -17,11 +17,14 @@
      Set up a Genesis Cloud Account</a></li>
     <li><a href="https://account.genesiscloud.com/dashboard/security">Generate your SSH Key and Developer
      API token.</a></li>
+     <li>Create a security group called <code>pygrid</code> that includes a inbound TCP connection for the 
+     ports 3000 and 5000</li>
      <li>Clone this repository to your local machine
-     <pre><code>git clone https://github.com/Benecoder/distributor.git<br>cd distributor</code></pre>
+     <pre><code>git clone https://github.com/Benecoder/distributor.git; cd distributor</code></pre>
      </li>
      <li> All installations in the cloud are performed once and then saved in a snapshot called 
      <code>nvidia+docker</code> Building this image for the first time might take a few minutes.
-     To start the gateway
+     Log information about the installation process are posted into /var/log/cloud-init-output.log
+     on the gateway instance. To start the gateway:
      <pre><code>python main.py --api_token="your API token" --ssh_key="your ssh key"</code></pre></li>
 </ol>

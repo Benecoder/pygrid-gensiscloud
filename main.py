@@ -30,5 +30,5 @@ if __name__ == '__main__':
     ssh_key = args.ssh_key
     no_workers = args.workers
 
-    build_image('gateway', ssh_key, api_token)
-    start_workers(api_token, ssh_key, no_workers)
+    instance = build_image('gateway', ssh_key, api_token)
+    start_workers(instance['ip'], api_token, ssh_key, no_workers)

@@ -95,8 +95,19 @@ class Node:
         print('public ip is: '+ip)
 
         print('running startup script ...')
-        while get_startup_script_status(ip) != 'done':
-            time.sleep(10)
+        error_count = 0
+        installation_finished = False
+        while not installation_finished:
+            time.sleep(5)
+            status = get_startup_script_status(ip)
+            installation_finished = (status == '/home/ubuntu/installation_finished')
+            if not installation_finished and status.split(':')[0] != 'ls':
+                error_count += 1
+            if error_count > 5:
+                print('checking the cloud-init status failed for the fifth time.')
+                print('Unable to determine state of the instance.')
+                print('exiting...')
+                exit()
 
         return ip
 
@@ -116,7 +127,7 @@ def get_list_of_names(n_o_names):
         return name_repo+random_names
 
 
-def start_workers(api_token, ssh_key, no_workers=1):
+def start_workers(gateway_ip, api_token, ssh_key, no_workers=1):
 
     names = get_list_of_names(no_workers)
     if no_workers == 1:
@@ -125,11 +136,11 @@ def start_workers(api_token, ssh_key, no_workers=1):
         print('Launching ' + ', '.join(names[:-1]) + ' and ' + names[-1] + ' as worker nodes ' +
               ' on separate instances.')
 
-    nodes = [Node(name, args.gateway_ip, api_token, ssh_key) for name in names]
+    nodes = [Node(name, gateway_ip, api_token, ssh_key) for name in names]
 
     return nodes
 
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    start_workers(args.api_token, args.ssh_key, args.workers)
+    start_workers(args.gateway_ip, args.api_token, args.ssh_key, args.workers)
