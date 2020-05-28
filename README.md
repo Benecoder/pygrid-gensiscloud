@@ -22,11 +22,10 @@
      <li>Clone this repository to your local machine
      <pre><code>git clone https://github.com/Benecoder/distributor.git; cd distributor</code></pre>
      </li>
-     <li>Place your Genesis Cloud API token and the name of your SSH Key in environment variables.
+     <li><a href="https://github.com/OpenMined/PySyft">Install PySyft and start jupyter lab</a>. An example is posted in
+     <code>model.ipynb</code>. For running the example, place your Genesis Cloud API token and the name of your SSH Key in environment variables.
 <pre>export GC_API_TOKEN="your-api-token"
 export GC_SSH_KEY_NAME="your-ssh-key-name"</pre></li>
-     <li><a href="https://github.com/OpenMined/PySyft">Install PySyft and start jupyter lab</a>. An example is posted in
-     <code>model.ipynb</code></li>
 </ol>
 <h3>
     How-to using the command line:
