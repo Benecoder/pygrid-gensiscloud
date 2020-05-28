@@ -25,6 +25,9 @@ services:
         ports:
         - 3000:3000" >> /home/ubuntu/docker-compose.yml
 
-touch /home/ubuntu/installation_finished
+docker pull openmined/grid-node:latest
+docker pull redis:latest
+
+touch /home/ubuntu/worker_ready.txt
 
 docker-compose -f /home/ubuntu/docker-compose.yml up

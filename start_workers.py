@@ -95,20 +95,8 @@ class Node:
         print('public ip is: '+ip)
 
         print('running startup script ...')
-        error_count = 0
-        installation_finished = False
-        while not installation_finished:
+        while not check_for_file(ip, '/home/ubuntu/worker_ready.txt'):
             time.sleep(5)
-            status = get_startup_script_status(ip)
-            installation_finished = (status == '/home/ubuntu/installation_finished')
-            if not installation_finished and status.split(':')[0] != 'ls':
-                error_count += 1
-            if error_count > 5:
-                print('checking the cloud-init status failed for the fifth time.')
-                print('Unable to determine state of the instance.')
-                print('exiting...')
-                exit()
-
         return ip
 
 

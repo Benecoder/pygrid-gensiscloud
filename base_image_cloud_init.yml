@@ -1,17 +1,16 @@
 #cloud-config
-package_update: true
-package_upgrade: true
+# package_update: true
+# package_upgrade: true
 
 runcmd:
   - [ "/bin/systemctl", start, resize-disk.service ]
   - [ cd , /home/ubuntu ]
   - [ git, clone, "https://github.com/Benecoder/distributor.git"]
   - [ cd, distributor ]
-  - [ chmod, +x, build_docker_image.sh ]
-  - [ ./build_docker_image.sh ]
-  - [ chmod, +x, gateway.sh ]
+  - [ chmod, +x, install_drivers.sh ]
+  - [ ./install_drivers.sh ]
   - [ echo, "127.0.0.1 gateway", '>', /etc/hosts]
-  - [ touch, /home/ubuntu/installation_finished ]
+  - [ touch, "/home/ubuntu/build_finished.txt" ]
   - [ docker, pull, "openmined/grid-gateway:latest" ]
   - [ docker, pull, "openmined/grid-node:latest" ]
   - [ sudo, docker-compose, up ]

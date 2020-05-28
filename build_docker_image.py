@@ -66,19 +66,8 @@ def build_image(ssh_key, api_token, name='gateway'):
     # waiting for the installation to finish
     if building_from_scratch:
         print('installing nvidia drivers and docker ...')
-        error_count = 0
-        installation_finished = False
-        while not installation_finished:
+        while not check_for_file(instance['ip'], '/home/ubuntu/build_finished.txt'):
             time.sleep(5)
-            status = get_startup_script_status(instance['ip'])
-            installation_finished = (status == '/home/ubuntu/installation_finished')
-            if not installation_finished and status.split(':')[0] != 'ls':
-                error_count += 1
-            if error_count > 5:
-                print('checking the cloud-init status failed for the fifth time.')
-                print('Unable to determine state of the instance.')
-                print('exiting...')
-                exit()
 
         # creating the image snapshot
         snapshot_id = create_instance_snapshot(instance['id'], desired_image_name, api_token)
@@ -86,7 +75,9 @@ def build_image(ssh_key, api_token, name='gateway'):
         while get_snapshot_status(snapshot_id, api_token) != 'active':
             time.sleep(5)
     else:
-        print('Used image snapshot '+str(desired_image_name) + ' for installation.')
+        print('Using image snapshot '+str(desired_image_name) + ' for installation.')
+        while not check_for_file(instance['ip'], '/home/ubuntu/refresh_finished.txt'):
+            time.sleep(5)
 
     return instance
 

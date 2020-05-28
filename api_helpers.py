@@ -1,6 +1,7 @@
 import requests
 import json
 import subprocess
+import time
 
 
 def get_available_images(API_TOKEN):
@@ -145,21 +146,32 @@ def get_instance_public_ip(instance_id, API_TOKEN):
         exit()
 
 
-def get_startup_script_status(public_ip):
+def check_for_file(public_ip, file_name):
 
     command = ['ssh', 'ubuntu@'+public_ip,
                '-o', 'StrictHostKeyChecking=accept-new',
-               'ls /home/ubuntu/installation_finished']
+               'ls ' + file_name]
 
-    output = subprocess.run(command, capture_output=True)
-    stdout = output.stdout[:-1].decode('utf-8')
-    stder = output.stderr[:-1].decode('utf-8')
-    if stdout:
-        return stdout
-    elif stder.split(':')[0] == 'ls':
-        return stder
-    else:
-        return 'request failed'
+    error_count = 0
+    while error_count < 6:
+        output = subprocess.run(command, capture_output=True)
+        stdout = output.stdout[:-1].decode('utf-8')
+        stder = output.stderr[:-1].decode('utf-8')
+
+        if stdout:
+            # success
+            return True
+        elif stder.split(':')[0] == 'ls':
+            # ssh call succeeded, but file missing
+            return False
+
+        error_count += 1
+        time.sleep(5)
+
+    print('Checking for the presence of the confirmation file failed.')
+    exit()
+
+
 
 
 def create_instance_snapshot(instance_id, snapshot_name, API_TOKEN):
