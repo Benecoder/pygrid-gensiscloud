@@ -70,7 +70,7 @@ class Node:
             "type": "vcpu-4_memory-12g_disk-80g_nvidia1080ti-1",
             "image_name": "nvidia+docker",
             "ssh_key_names": [self.ssh_key],
-            "security_group_names": ["standard"],
+            "security_group_names": ["standard", "pygrid"],
             "startup_script": startup_script,
         }
 
