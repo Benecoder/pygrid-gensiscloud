@@ -22,7 +22,7 @@ parser.add_argument(
 )
 
 
-def build_image(name, ssh_key, api_token):
+def build_image(ssh_key, api_token, name='gateway'):
 
     instance = {
         "name": name,
@@ -96,4 +96,4 @@ if __name__ == '__main__':
     api_token_arg = args.api_token
     ssh_key_arg = args.ssh_key
 
-    build_image('gateway', ssh_key_arg, api_token_arg)
+    build_image(ssh_key_arg, api_token_arg)
