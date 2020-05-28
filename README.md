@@ -10,7 +10,26 @@
 </p>
 
 <h3>
-    How-to:
+    How-to using a jupyter notebook:
+</h3>
+<ol>
+    <li><a href="https://support.genesiscloud.com/support/solutions/articles/47001101437-first-steps-connecting-to-a-linux-instance-with-gpus">
+     Set up a Genesis Cloud Account</a></li>
+    <li><a href="https://account.genesiscloud.com/dashboard/security">Generate your SSH Key and Developer
+     API token.</a></li>
+     <li>Create a security group called <code>pygrid</code> that includes a inbound TCP connection for the 
+     ports 3000 and 5000</li>
+     <li>Clone this repository to your local machine
+     <pre><code>git clone https://github.com/Benecoder/distributor.git; cd distributor</code></pre>
+     </li>
+     <li>Place your Genesis Cloud API token and the name of your SSH Key in environment variables.
+<pre>export GC_API_TOKEN="your-api-token"
+export GC_SSH_KEY_NAME="your-ssh-key-name"</pre></li>
+     <li><a href="https://github.com/OpenMined/PySyft">Install PySyft and start jupyter lab</a>. An example is posted in
+     <code>model.ipynb</code></li>
+</ol>
+<h3>
+    How-to using the command line:
 </h3>
 <ol>
     <li><a href="https://support.genesiscloud.com/support/solutions/articles/47001101437-first-steps-connecting-to-a-linux-instance-with-gpus">
