@@ -27,25 +27,6 @@
 <pre>export GC_API_TOKEN="your-api-token"
 export GC_SSH_KEY_NAME="your-ssh-key-name"</pre></li>
 </ol>
-<h3>
-    How-to using the command line:
-</h3>
-<ol>
-    <li><a href="https://support.genesiscloud.com/support/solutions/articles/47001101437-first-steps-connecting-to-a-linux-instance-with-gpus">
-     Set up a Genesis Cloud Account</a></li>
-    <li><a href="https://account.genesiscloud.com/dashboard/security">Generate your SSH Key and Developer
-     API token.</a></li>
-     <li>Create a security group called <code>pygrid</code> that includes a inbound TCP connection for the 
-     ports 3000 and 5000</li>
-     <li>Clone this repository to your local machine
-     <pre><code>git clone https://github.com/Benecoder/distributor.git; cd distributor</code></pre>
-     </li>
-     <li> All installations in the remote instances are performed once and then saved in a snapshot called 
-     <code>nvidia+docker</code> Building this image for the first time might take a few minutes.
-     Log information about the installation process are posted into /var/log/cloud-init-output.log
-     on the gateway instance. To start the gateway:
-     <pre><code>python main.py --api_token="your API token" --ssh_key="your ssh key"</code></pre></li>
-</ol>
 
 <h3>
     Under the hood:
