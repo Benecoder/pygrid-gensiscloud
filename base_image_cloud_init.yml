@@ -5,8 +5,8 @@
 runcmd:
   - [ "/bin/systemctl", start, resize-disk.service ]
   - [ cd , /home/ubuntu ]
-  - [ git, clone, "https://github.com/Benecoder/distributor.git"]
-  - [ cd, distributor ]
+  - [ git, clone, "https://github.com/Benecoder/pygrid-gensiscloud.git"]
+  - [ cd, pygrid-gensiscloud ]
   - [ chmod, +x, install_drivers.sh ]
   - [ ./install_drivers.sh ]
   - [ echo, "127.0.0.1 gateway", '>', /etc/hosts]
