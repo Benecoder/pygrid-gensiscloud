@@ -1,3 +1,4 @@
 requests
 munch
--e git+ssh://git@github.com/genesiscloud/py-genesiscloud.git#egg=genesiscloud
+py-genesiscloud
+syft[udacity]
