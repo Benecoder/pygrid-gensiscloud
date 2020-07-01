@@ -7,6 +7,10 @@ compute instances. The training protocol is specified on a local desktop. The di
 a PyGrid distributed across multiple Genesis Cloud instances. Each instance is home to one worker node and 
 one instance runs the gateway.
 
+### Warning
+Executing this script will start a series of instances, the runtime of which will count against your account credits.
+Make sure to shut down any idle computing power so as not to accumulate accidental costs.
+This is solely a proof of concept and, as stated in the license, none of the functionality is guaranteed.
 
 ### How-to using a jupyter notebook:
 
